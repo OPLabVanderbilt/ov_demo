@@ -112,7 +112,7 @@
     for (trial of blastTrials) {
         timeline.push({
             type: jsPsychHtmlButtonResponse,
-            stimulus: '<p>Click the cancerous blood cell<p>',
+            stimulus: '<p>Click/tap the cancerous blood cell<p>',
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
@@ -164,7 +164,7 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click the object you studied</p>
+                <p>Click/tap the object you studied</p>
                 <p>(it could be turned sideways)</p>
             `,
             choices: trial.Choices,
@@ -208,7 +208,7 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click the airplane that is the best match</p>
+                <p>Click/tap the airplane that is the best match</p>
             `,
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
@@ -239,7 +239,7 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click the different dish</p>
+                <p>Click/tap the different dish</p>
             `,
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
@@ -284,7 +284,7 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click the best average robot of the previous 4</p>
+                <p>Click/tap the best average robot of the previous 4</p>
             `,
             choices: transformerChoices,
             button_html: '<input type="image" src="%choice%"/>',
