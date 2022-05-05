@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>o Demo</title>
+    <script src="https://unpkg.com/jspsych@7.2.1"></script>
+    <link href="https://unpkg.com/jspsych@7.2.1/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/@jspsych/plugin-browser-check@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.0"></script>
+    <script src="./trials.js"></script>
+</head>
+
+<body></body>
+<script>
+    var jsPsych = initJsPsych({})
+
+    // Timeline
+    var timeline = []
+
+    let browserCheckID
+    timeline.push({
+        type: jsPsychBrowserCheck,
+        inclusion_function: (data) => { return true }, // Always returns true now to allow phones and tablets
+        on_finish: function () { browserCheckID = jsPsych.getCurrentTimelineNodeID() }
+    })
+
+    // Get files to preload
+    blastInst = [
+        './stimuli/blastInst1.png',
+        './stimuli/blastInst2.png',
+        './stimuli/blastInst3.png'
+    ]
+    transformerChoices = [
+        './stimuli/transformer1.png',
+        './stimuli/transformer2.png',
+        './stimuli/transformer3.png',
+        './stimuli/transformer4.png',
+        './stimuli/transformer5.png',
+        './stimuli/transformer6.png'
+    ]
+    greebleStudy = [
+        './stimuli/greebleStudy1.png',
+        './stimuli/greebleStudy2.png',
+        './stimuli/greebleStudy3.png'
+    ]
+    let images = []
+    images = images.concat(blastInst)
+    images = images.concat(blastTrials.map(x => x.Choices).flat().map(x => './stimuli/' + x))
+    images = images.concat(greebleStudy)
+    images = images.concat(greebleTrials.map(x => x.Choices).flat().map(x => './stimuli/' + x))
+    images = images.concat(planeTrials.map(x => x.StudyImage).map(x => './stimuli/' + x))
+    images = images.concat(planeTrials.map(x => x.Choices).flat().map(x => './stimuli/' + x))
+    images = images.concat(foodTrials.map(x => x.Choices).flat().map(x => './stimuli/' + x))
+    images = images.concat(transformerTrials.map(x => x.StudyImage).map(x => './stimuli/' + x))
+    images = images.concat(transformerChoices)
+
+    // Preload
+    timeline.push({
+        type: jsPsychPreload,
+        auto_preload: false,
+        images: images
+    })
+
+    // Instructions for Blast
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>First task: you want select the cancerous blood cells.</p>
+        `,
+        choices: ["Continue"],
+        post_trial_gap: 500
+    })
+
+    timeline.push({
+        type: jsPsychImageButtonResponse,
+        stimulus: "./stimuli/blastInst1.png",
+        choices: ['Continue'],
+        post_trial_gap: 500,
+        stimulus_width: function () {
+            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            return screenWidth > 900 ? 900 : screenWidth
+        }
+    })
+
+    timeline.push({
+        type: jsPsychImageButtonResponse,
+        stimulus: "./stimuli/blastInst2.png",
+        choices: ['Continue'],
+        post_trial_gap: 500,
+        stimulus_width: function () {
+            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            return screenWidth > 900 ? 900 : screenWidth
+        }
+    })
+
+    timeline.push({
+        type: jsPsychImageButtonResponse,
+        stimulus: "./stimuli/blastInst3.png",
+        choices: ['Start'],
+        post_trial_gap: 500,
+        stimulus_width: function () {
+            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            return screenWidth > 900 ? 900 : screenWidth
+        }
+    })
+
+    // Build trials for blast
+    for (trial of blastTrials) {
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: '<p>Click the cancerous blood cell<p>',
+            choices: trial.Choices,
+            button_html: '<input type="image" src="./stimuli/%choice%"/>',
+            post_trial_gap: 250,
+            data: { CorrRes: trial.Correct - 1 },
+            on_finish: function (data) {
+                if (data.response == data.CorrRes) {
+                    data.Correct = true
+                } else {
+                    data.Correct = false
+                }
+            }
+        })
+
+        timeline.push({
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function () {
+                if (jsPsych.data.get().last(1).values()[0].Correct) {
+                    return "<p>Correct!</p>"
+                } else {
+                    return "<p>Incorrect.</p>"
+                }
+            },
+            choices: ['NO_KEYS'],
+            trial_duration: 500
+        })
+    }
+
+    // Instructions for Greebles
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Second task: you want to remember three objects then recognize them later against similar objects.</p>
+        `,
+        choices: ["Start"],
+        post_trial_gap: 500
+    })
+
+    timeline.push({
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: greebleStudy.map(x => `<img src="${x}">`).join(''),
+        choices: ['NO_KEYS'],
+        prompt: 'Study these 3 objects for 10 seconds',
+        trial_duration: 10000,
+        post_trial_gap: 500,
+    })
+
+    // Build greeble trials
+    for (trial of greebleTrials) {
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `
+                <p>Click the object you studied</p>
+                <p>(it could be turned sideways)</p>
+            `,
+            choices: trial.Choices,
+            button_html: '<input type="image" src="./stimuli/%choice%"/>',
+            post_trial_gap: 250,
+            data: { CorrRes: trial.Correct - 1 },
+            on_finish: function (data) {
+                if (data.response == data.CorrRes) {
+                    data.Correct = true
+                } else {
+                    data.Correct = false
+                }
+            }
+        })
+    }
+
+    // Instructions for Planes
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Third task: you want to select the airplane that matches the one you studied.</p>
+        `,
+        choices: ["Start"],
+        post_trial_gap: 500
+    })
+
+    // Build plane trials
+    for (trial of planeTrials) {
+        timeline.push({
+            type: jsPsychImageKeyboardResponse,
+            stimulus: './stimuli/' + trial.StudyImage,
+            stimulus_width: function () {
+                const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+                return screenWidth > 900 ? 900 : screenWidth
+            },
+            choices: ['NO_KEYS'],
+            trial_duration: 5000,
+            post_trial_gap: 250
+        })
+
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `
+                <p>Click the airplane that is the best match</p>
+            `,
+            choices: trial.Choices,
+            button_html: '<input type="image" src="./stimuli/%choice%"/>',
+            post_trial_gap: 250,
+            data: { CorrRes: trial.Correct - 1 },
+            on_finish: function (data) {
+                if (data.response == data.CorrRes) {
+                    data.Correct = true
+                } else {
+                    data.Correct = false
+                }
+            }
+        })
+    }
+
+    // Instructions for food
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Fourth task: you want to select the dish that is different from the rest.</p>
+        `,
+        choices: ["Start"],
+        post_trial_gap: 500
+    })
+
+    // Build food trials
+    for (trial of foodTrials) {
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `
+                <p>Click the different dish</p>
+            `,
+            choices: trial.Choices,
+            button_html: '<input type="image" src="./stimuli/%choice%"/>',
+            post_trial_gap: 250,
+            data: { CorrRes: trial.Correct - 1 },
+            on_finish: function (data) {
+                if (data.response == data.CorrRes) {
+                    data.Correct = true
+                } else {
+                    data.Correct = false
+                }
+            }
+        })
+    }
+
+    // Instructions for transformers
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Last task: you want to average 4 robots together.</p>
+            <p>On each trial, you will see 4 robots together.</p>
+            <p>Then, you will have to choose a robot that is the best AVERAGE of the 4 you have seen.</p>
+        `,
+        choices: ["Start"],
+        post_trial_gap: 500
+    })
+
+    // Build transformer trials
+    for (trial of transformerTrials) {
+        timeline.push({
+            type: jsPsychImageKeyboardResponse,
+            stimulus: './stimuli/' + trial.StudyImage,
+            stimulus_width: function () {
+                const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+                return screenWidth > 775 ? 775 : screenWidth
+            },
+            choices: ['NO_KEYS'],
+            trial_duration: 5000,
+            post_trial_gap: 250
+        })
+
+        timeline.push({
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `
+                <p>Click the best average robot of the previous 4</p>
+            `,
+            choices: transformerChoices,
+            button_html: '<input type="image" src="%choice%"/>',
+            post_trial_gap: 250,
+            data: { CorrRes: trial.Correct - 1, CloseRes: trial.Close.map(x => x - 1) },
+            on_finish: function (data) {
+                if (data.response == data.CorrRes) {
+                    data.Score = 1
+                } else if (data.CloseRes.includes(data.response)) {
+                    data.Score = 0.5
+                } else {
+                    data.Score = 0
+                }
+            }
+        })
+    }
+
+    const data = [11, 8, 8.5, 11, 11, 12.5, 10, 12, 13, 6.5, 3.5, 5, 9.5, 12.5, 11.5, 11, 10, 9, 8.5, 9.5, 11.5, 11.5, 7.5, 12, 15, 11, 16, 12, 9.5, 9.5, 13.5, 10.5, 11.5, 8.5, 7, 12.5, 11.5, 9.5, 10.5, 10.5, 12, 10.5, 12, 10.5, 12, 8, 12, 13.5, 10.5, 9, 9, 12, 9.5, 10.5, 9.5, 12, 12, 8.5, 12, 8, 8.5, 9, 10.5, 9.5, 10.5, 9, 12, 9, 12, 10, 10.5, 11, 10, 10.5, 9.5, 11, 9, 11.5, 9, 13.5, 12.5, 10.5, 12, 12, 10, 8.5, 9.5, 11.5, 11, 11.5, 12.5, 10.5, 10, 11.5, 10.5, 7.5, 8, 12.5, 11, 11.5]
+    let percentile
+    timeline.push({
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "<p>Calculating results!</p>",
+        trial_duration: 1000,
+        choices: ['NO_KEYS'],
+        on_finish: function (trial) {
+            let score = jsPsych.data.get().filter({ Correct: true }).select('Correct').count()
+            console.log('Score: ' + score)
+            let ensScore = jsPsych.data.get().filterCustom(function (trial) { return [0, 0.5, 1].includes(trial.Score) }).select('Score').sum()
+            console.log('EnsScore: ' + ensScore)
+            score = score + ensScore
+            console.log('Total Score: ' + score)
+            percentile = Math.round((data.filter(x => x < score).length / data.length) * 100)
+            console.log('Percentile: ' + percentile)
+        }
+    })
+    timeline.push({
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: function () {
+            return `
+            <p>This was ONLY A DEMO meant to give examples of some of the tasks that depend on o.</p>
+            <p>Measuring o in these tasks is not valid with this number of trials and so this demo is not a scientifically accurate test of your abilities.</p>
+            <p>Just for fun, your score on this DEMO was better than ${percentile}% of the first 100 people who tried it. Remember that with a longer and more valid test, you could have performed very differently.</p>
+            `
+        },
+        choices: ['NO_KEYS'],
+        post_trial_gap: 500
+    })
+    // Run
+    jsPsych.run(timeline)
+</script>
