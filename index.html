@@ -302,7 +302,7 @@
         })
     }
 
-    const data = [11, 8, 8.5, 11, 11, 12.5, 10, 12, 13, 6.5, 3.5, 5, 9.5, 12.5, 11.5, 11, 10, 9, 8.5, 9.5, 11.5, 11.5, 7.5, 12, 15, 11, 16, 12, 9.5, 9.5, 13.5, 10.5, 11.5, 8.5, 7, 12.5, 11.5, 9.5, 10.5, 10.5, 12, 10.5, 12, 10.5, 12, 8, 12, 13.5, 10.5, 9, 9, 12, 9.5, 10.5, 9.5, 12, 12, 8.5, 12, 8, 8.5, 9, 10.5, 9.5, 10.5, 9, 12, 9, 12, 10, 10.5, 11, 10, 10.5, 9.5, 11, 9, 11.5, 9, 13.5, 12.5, 10.5, 12, 12, 10, 8.5, 9.5, 11.5, 11, 11.5, 12.5, 10.5, 10, 11.5, 10.5, 7.5, 8, 12.5, 11, 11.5]
+    const data = [13, 13, 7.5, 14, 14, 10.5, 12.5, 11, 13.5, 14, 11, 9.5, 14, 11, 11, 10.5, 12.5, 12.5, 11, 14.5, 10, 10, 10.5, 12, 12.5, 14.5, 10, 11.5, 13.5, 12.5, 10, 10, 11, 12, 12, 13.5, 13.5, 12, 9, 6.5, 12, 7, 14.5, 7.5, 9.5, 14.5, 11.5, 10.5, 9, 8.5, 14.5, 12.5, 16, 12.5, 12.5, 9.5, 8, 14.5, 10, 13, 13.5, 10.5, 11.5, 7.5, 12.5, 11, 10.5, 14, 12, 15.5, 13, 7, 12, 10, 12, 11, 11, 12.5, 10, 12.5, 12, 13, 13.5, 15.5, 10.5, 15, 13, 12.5, 13.5, 12.5, 15, 10, 7, 15.5, 13, 13.5, 9, 10, 15, 14.5]
     let percentile
     timeline.push({
         type: jsPsychHtmlKeyboardResponse,
@@ -322,7 +322,7 @@
             return `
             <p>This was ONLY A DEMO meant to give examples of some of the tasks that depend on o.</p>
             <p>Measuring o in these tasks is not valid with this number of trials and so this demo is not a scientifically accurate test of your abilities.</p>
-            <p>Just for fun, your score on this DEMO was better than ${percentile}% of the first 100 people who tried it. Remember that with a longer and more valid test, you could have performed very differently.</p>
+            <p>Just for fun, <b>your score on this DEMO was better than ${percentile}% of the first 100 people who tried it</b>. Remember that with a longer and more valid test, you could have performed very differently.</p>
             `
         },
         choices: ['NO_KEYS'],
