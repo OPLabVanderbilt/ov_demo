@@ -303,7 +303,7 @@
       <p>Click the best average robot of the previous 4</p>
     `,
             choices: transformerChoices,
-            button_html: '<input type="image" src="./stimuli/%choice%"/>',
+            button_html: '<input type="image" src="%choice%"/>',
             post_trial_gap: 250,
             data: { CorrRes: trial.Correct - 1, CloseRes: trial.Close.map(x => x - 1) },
             on_finish: function (data) {
