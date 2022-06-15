@@ -21,18 +21,12 @@
     // Timeline
     var timeline = []
 
-    let browserCheckID
-    timeline.push({
-        type: jsPsychBrowserCheck,
-        inclusion_function: (data) => { return true }, // Always returns true now to allow phones and tablets
-        on_finish: function () { browserCheckID = jsPsych.getCurrentTimelineNodeID() }
-    })
-
     // Get files to preload
     blastInst = [
         './stimuli/blastInst1.png',
         './stimuli/blastInst2.png',
-        './stimuli/blastInst3.png'
+        './stimuli/blastInst3.png',
+        './stimuli/blastInst4.png'
     ]
     transformerChoices = [
         './stimuli/transformer1.png',
@@ -61,16 +55,27 @@
     // Preload
     timeline.push({
         type: jsPsychPreload,
-        auto_preload: false,
+        auto_preload: true,
         images: images
+    })
+
+    // General intro
+    timeline.push({
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>We will go through examples of five different tasks that we use in our experiments.</p>
+            <p>You will experience short versions of what our participants have to do and the types of objects they see.</p>
+        `,
+        choices: ["Continue"],
+        post_trial_gap: 500
     })
 
     // Instructions for Blast
     timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>First task: you want select the cancerous blood cells.</p>
-        `,
+    <p>First task: you want select the cancerous blood cells.</p>
+  `,
         choices: ["Continue"],
         post_trial_gap: 500
     })
@@ -81,7 +86,7 @@
         choices: ['Continue'],
         post_trial_gap: 500,
         stimulus_width: function () {
-            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            const screenWidth = window.innerWidth
             return screenWidth > 900 ? 900 : screenWidth
         }
     })
@@ -92,7 +97,7 @@
         choices: ['Continue'],
         post_trial_gap: 500,
         stimulus_width: function () {
-            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            const screenWidth = window.innerWidth
             return screenWidth > 900 ? 900 : screenWidth
         }
     })
@@ -100,10 +105,21 @@
     timeline.push({
         type: jsPsychImageButtonResponse,
         stimulus: "./stimuli/blastInst3.png",
+        choices: ['Continue'],
+        post_trial_gap: 500,
+        stimulus_width: function () {
+            const screenWidth = window.innerWidth
+            return screenWidth > 900 ? 900 : screenWidth
+        }
+    })
+
+    timeline.push({
+        type: jsPsychImageButtonResponse,
+        stimulus: "./stimuli/blastInst4.png",
         choices: ['Start'],
         post_trial_gap: 500,
         stimulus_width: function () {
-            const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+            const screenWidth = window.innerWidth
             return screenWidth > 900 ? 900 : screenWidth
         }
     })
@@ -112,7 +128,7 @@
     for (trial of blastTrials) {
         timeline.push({
             type: jsPsychHtmlButtonResponse,
-            stimulus: '<p>Click/tap the cancerous blood cell<p>',
+            stimulus: '<p>Click the cancerous blood cell<p>',
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
@@ -144,8 +160,8 @@
     timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>Second task: you want to remember three objects then recognize them later against similar objects.</p>
-        `,
+    <p>Second task: you want to remember three objects then recognize them later against similar objects.</p>
+  `,
         choices: ["Start"],
         post_trial_gap: 500
     })
@@ -164,9 +180,9 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click/tap the object you studied</p>
-                <p>(it could be turned sideways)</p>
-            `,
+      <p>Click the object you studied</p>
+      <p>(it could be turned sideways)</p>
+    `,
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
@@ -185,8 +201,8 @@
     timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>Third task: you want to select the airplane that matches the one you studied.</p>
-        `,
+    <p>Third task: you want to select the airplane that matches the one you studied.</p>
+  `,
         choices: ["Start"],
         post_trial_gap: 500
     })
@@ -197,7 +213,7 @@
             type: jsPsychImageKeyboardResponse,
             stimulus: './stimuli/' + trial.StudyImage,
             stimulus_width: function () {
-                const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+                const screenWidth = window.innerWidth
                 return screenWidth > 900 ? 900 : screenWidth
             },
             choices: ['NO_KEYS'],
@@ -208,8 +224,8 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click/tap the airplane that is the best match</p>
-            `,
+      <p>Click the airplane that is the best match</p>
+    `,
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
@@ -228,8 +244,8 @@
     timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>Fourth task: you want to select the dish that is different from the rest.</p>
-        `,
+    <p>Fourth task: you want to select the dish that is different from the rest.</p>
+  `,
         choices: ["Start"],
         post_trial_gap: 500
     })
@@ -239,8 +255,8 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click/tap the different dish</p>
-            `,
+      <p>Click the different dish</p>
+    `,
             choices: trial.Choices,
             button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
@@ -259,10 +275,10 @@
     timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>Last task: you want to average 4 robots together.</p>
-            <p>On each trial, you will see 4 robots together.</p>
-            <p>Then, you will have to choose a robot that is the best AVERAGE of the 4 you have seen.</p>
-        `,
+    <p>Last task: you want to average 4 robots together.</p>
+    <p>On each trial, you will see 4 robots together.</p>
+    <p>Then, you will have to choose a robot that is the best AVERAGE of the 4 you have seen.</p>
+  `,
         choices: ["Start"],
         post_trial_gap: 500
     })
@@ -273,7 +289,7 @@
             type: jsPsychImageKeyboardResponse,
             stimulus: './stimuli/' + trial.StudyImage,
             stimulus_width: function () {
-                const screenWidth = jsPsych.data.getDataByTimelineNode(browserCheckID).select('width').values[0]
+                const screenWidth = window.innerWidth
                 return screenWidth > 775 ? 775 : screenWidth
             },
             choices: ['NO_KEYS'],
@@ -284,17 +300,17 @@
         timeline.push({
             type: jsPsychHtmlButtonResponse,
             stimulus: `
-                <p>Click/tap the best average robot of the previous 4</p>
-            `,
+      <p>Click the best average robot of the previous 4</p>
+    `,
             choices: transformerChoices,
-            button_html: '<input type="image" src="%choice%"/>',
+            button_html: '<input type="image" src="./stimuli/%choice%"/>',
             post_trial_gap: 250,
             data: { CorrRes: trial.Correct - 1, CloseRes: trial.Close.map(x => x - 1) },
             on_finish: function (data) {
                 if (data.response == data.CorrRes) {
-                    data.Score = 1
+                    data.Score = 2
                 } else if (data.CloseRes.includes(data.response)) {
-                    data.Score = 0.5
+                    data.Score = 1
                 } else {
                     data.Score = 0
                 }
