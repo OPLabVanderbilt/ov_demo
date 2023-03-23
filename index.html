@@ -87,6 +87,7 @@
         post_trial_gap: 500,
         stimulus_width: function () {
             const screenWidth = window.innerWidth
+            console.log("Screen width: " + screenWidth + "px")
             return screenWidth > 900 ? 900 : screenWidth
         }
     })
